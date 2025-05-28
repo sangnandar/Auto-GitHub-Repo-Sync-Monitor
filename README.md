@@ -4,7 +4,6 @@ This project monitors the synchronization status between **remote GitHub reposit
 
 This setup is especially helpful if you manage many repositories—either as an owner or collaborator—and occasionally make small changes via the GitHub web interface. When you're ready, you can easily check and sync them locally, one by one, even on a lazy afternoon.
 
----
 
 ## 📁 Project Structure
 
@@ -24,7 +23,6 @@ This setup is especially helpful if you manage many repositories—either as an 
 > * `config.gs`
 > * `triggers.gs`
 
----
 
 ### 🐍 Python Script
 
@@ -44,7 +42,6 @@ This setup is especially helpful if you manage many repositories—either as an 
 > * `github-compare.py`
 > * `vault.json` – stores service account credentials and spreadsheet ID.
 
----
 
 ## 🧪 Setup
 
@@ -57,7 +54,7 @@ This setup is especially helpful if you manage many repositories—either as an 
   * **Secret Manager API** enabled, to store the Github token.
   * A **Google Sheet** set up with columns:
 
-  ```
+  ```text
   A | B | C (Remote URL) | D (Local Path) | E (Status)
   ```
 * A **Service Account** with access to Google Sheets API. Share the Spreadsheet (as editor) with this service account.
@@ -102,7 +99,6 @@ This setup is especially helpful if you manage many repositories—either as an 
    python github-compare.py
    ```
 
----
 
 ### 🔹 Task Scheduler / Cron
 
@@ -121,7 +117,6 @@ Make the task run periodically. If you are using Windows, add entry to Task Sche
       path\to\the\python\file
       ```
 
----
 
 ## 🧠 How It Works
 
@@ -133,7 +128,6 @@ Make the task run periodically. If you are using Windows, add entry to Task Sche
    * Compares each local directory with its remote.
    * Writes the comparison result to Col E.
 
----
 
 ## 📓 Example Sheet
 
@@ -142,7 +136,6 @@ Make the task run periodically. If you are using Windows, add entry to Task Sche
 | public    | user1 | [https://github.com/user1/my-app](  https://github.com/user1/my-app)   | /Users/you/my-app   | ✅ Up to date     |
 | private   | user1 | [https://github.com/user1/api-core](https://github.com/user1/api-core) | /Users/you/api-core | 🔄 Not up to date |
 
----
 
 ## ✅ Benefits
 
