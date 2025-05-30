@@ -2,7 +2,7 @@
 
 This project monitors the synchronization status between **remote GitHub repositories** and **local git directories** by combining **Google Apps Script** and a **Python script**.
 
-This setup is especially helpful if you manage many repositories—either as an owner or collaborator—and occasionally make small changes via the GitHub web interface. When you're ready, you can easily check and sync them locally, one by one, even on a lazy afternoon.
+This setup is especially helpful if you manage many repositories—either as an owner or collaborator—and occasionally make small changes via the GitHub web interface. On a lazy afternoon, while winding down, you can update your local repos with ease.
 
 
 ## 📁 Project Structure
@@ -104,15 +104,15 @@ This setup is especially helpful if you manage many repositories—either as an 
 
 Make the task run periodically. If you are using Windows, add entry to Task Scheduler:
 
-  * Program/script, use `pythonw` instead of `python` to make it run in background
+  * **Program/script**, use `pythonw` instead of `python` to make it run in background
       ```text
       "path\to\binary\pythonw.exe"
       ```
-  * Add arguments
+  * **Add arguments**
       ```text
       github-compare.py
       ```
-  * Start in, don't enclosed with quotes, even if the path contains spaces
+  * **Start in**, don't enclosed with quotes, even if the path contains spaces
       ```text
       path\to\the\python\file
       ```
@@ -123,10 +123,10 @@ Make the task run periodically. If you are using Windows, add entry to Task Sche
 1. Use `Custom Menu → Fetch repos` in the Google Sheet to populate it with your GitHub repositories (Col C).
 2. You manually add matching local repository paths to Col D.
 3. Python script:
-
    * Fetches the Sheet data.
    * Compares each local directory with its remote.
    * Writes the comparison result to Col E.
+4. Set it and forget it. Set task scheduler/cron to run periodically in background.
 
 
 ## 📓 Example Sheet
