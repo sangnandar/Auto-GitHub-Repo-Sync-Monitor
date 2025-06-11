@@ -49,6 +49,14 @@ function fetchGitHubRepos()
   }
 
   let newRows = [];
+
+  const sorter = [
+    { type: 'string', field: 'visibility',  order: 'asc' },
+    { type: 'date',   field: 'created_at',  order: 'asc' },
+    { type: 'string', field: 'owner.login', order: 'asc' }
+  ];
+  allRepos.sort(sortBy(sorter));
+
   allRepos.forEach(repo => {
     const type = repo.private ? 'private' : 'public';
     const owner = repo.owner.login;

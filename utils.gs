@@ -142,3 +142,94 @@ function zeroBased(obj)
   }
   return result;
 }
+
+/**
+ * Returns a comparator function for Array.prototype.sort based on multiple fields,
+ * supporting nested paths and safe fallback casting.
+ * 
+ * Sorter example:
+ * ```js
+ * const sorter = [
+ *   { type: 'string', field: 'visibility',  order: 'asc' },
+ *   { type: 'date',   field: 'created_at',  order: 'asc' },
+ *   { type: 'string', field: 'owner.login', order: 'asc' }
+ * ];
+ * ```
+ *
+ * @param {Array<{
+ *   type: 'string' | 'date' | 'number',
+ *   field: string,             // dot-notated path (e.g., "owner.login")
+ *   order: 'asc' | 'desc'
+ * }>} sortConfig - Sorting rules.
+ * 
+ * @returns {(a: object, b: object) => number} Comparator function for .sort()
+ * 
+ * @example
+ *    allRepos.sort(sortBy(sorter));
+ */
+function sortBy(sortConfig)
+{
+  return function(a, b)
+  {
+    for (const { type, field, order } of sortConfig) {
+      const aRaw = getNested(a, field);
+      const bRaw = getNested(b, field);
+
+      let aVal, bVal;
+
+      switch (type) {
+        case 'string':
+          aVal = String(aRaw ?? '');
+          bVal = String(bRaw ?? '');
+          break;
+        case 'date':
+          aVal = new Date(aRaw ?? 0);
+          bVal = new Date(bRaw ?? 0);
+          break;
+        case 'number':
+          aVal = Number(aRaw ?? 0);
+          bVal = Number(bRaw ?? 0);
+          break;
+        default:
+          aVal = bVal = null;
+      }
+
+      let comparison = 0;
+
+      switch (type) {
+        case 'string':
+          comparison = aVal.localeCompare(bVal);
+          break;
+        case 'date':
+        case 'number':
+          comparison = aVal - bVal;
+          break;
+        default:
+          comparison = 0;
+      }
+
+      if (comparison !== 0) {
+        return order === 'asc' ? comparison : -comparison;
+      }
+    }
+
+    return 0;
+  };
+}
+
+/**
+ * Safely retrieves a nested property from an object using a dot-delimited path.
+ *
+ * @param {object} obj - The object to traverse.
+ * @param {string} path - Dot-separated path string (e.g., "owner.login").
+ * @returns {*} The value at the given path, or undefined if any part of the path is missing.
+ *
+ * @example
+ *    getNested(obj, "a.b.c"); // returns obj.a.b.c if it exists, otherwise undefined
+ *
+ * @note This function does NOT support array index access (e.g., "items[0].value").
+ */
+function getNested(obj, path)
+{
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
+}
