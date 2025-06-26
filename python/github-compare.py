@@ -75,30 +75,30 @@ def process_and_update_sheet():
     service = build('sheets', 'v4', credentials=creds)
 
     sheet = service.spreadsheets()
-    range_name = f'{SHEET_NAME}!A1:D'
+    range_name = f'{SHEET_NAME}!A2:E' # exclude header row
     result = sheet.values().get(
         spreadsheetId=SPREADSHEET_ID, range=range_name).execute()
     values = result.get('values', [])
 
-    if not values or len(values) < 2:
+    if not values or len(values) == 0:
         print('No data found.')
         return
 
-    repo_rows = values[1:] # exclude header row
+    repo_rows = values
     status_results = []
 
     for idx, row in enumerate(repo_rows):
-        if len(row) < 4:
+        if len(row) < 5: # Ensure there are at least 5 columns
             print("⚠️ Skipping incomplete row:", row)
             status_results.append(["⚠️ Incomplete row"])
             continue
 
-        local_repo = row[3]
+        local_repo = row[4]
         status = check_repo_status(local_repo)
         status_results.append([status])  # wrap in list for 1 column
 
-    # Write back to column E starting from E2
-    update_range = f'{SHEET_NAME}!E2:E{len(status_results)+1}'
+    # Write back to column F starting from F2
+    update_range = f'{SHEET_NAME}!F2:F{len(status_results) + 1}'
     body = {'values': status_results}
 
     sheet.values().update(

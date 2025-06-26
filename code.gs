@@ -60,17 +60,18 @@ function fetchGitHubRepos()
   allRepos.forEach(repo => {
     const type = repo.private ? 'private' : 'public';
     const owner = repo.owner.login;
+    const title = getRepoReadmeTitle(owner, repo.name, token);
     const remoteRepo = repo.html_url;
     const key = owner + '-' + remoteRepo;
 
     if (!existingRepos.has(key)) {
-      newRows.push([type, owner, remoteRepo]);
+      newRows.push([type, owner, title, remoteRepo]);
       existingRepos.add(key);
     }
   });
 
   if (newRows.length) {
-    sheet.getRange(lastRow + 1, 1, newRows.length, 3).setValues(newRows)
+    sheet.getRange(lastRow + 1, 1, newRows.length, 4).setValues(newRows)
       .setShowHyperlink(false); // remvove hyperlinks
   } else {
     showAlert('No new repos.');

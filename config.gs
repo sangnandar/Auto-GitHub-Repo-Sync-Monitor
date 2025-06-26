@@ -27,9 +27,10 @@ const SHEETCONFIG = readOnlyObject({
     variableNames: {
       type                  : { col: 'A',  type: 'string' },
       owner                 : { col: 'B',  type: 'string' },
-      remoteRepo            : { col: 'C',  type: 'string' },
-      localRepo             : { col: 'D',  type: 'string' },
-      status                : { col: 'E',  type: 'string' }
+      title                 : { col: 'C',  type: 'string' },
+      remoteRepo            : { col: 'D',  type: 'string' },
+      localRepo             : { col: 'E',  type: 'string' },
+      status                : { col: 'F',  type: 'string' }
     }
   }
 

@@ -1,4 +1,4 @@
 {
     "credentialFilePath":  "path/to/your/credentials.json",
-    "spreadsheetId":  "YOUR-SPREADSHEET-ID"
+    "spreadsheetId":  "YOUR_SPREADSHEET_ID"
 }

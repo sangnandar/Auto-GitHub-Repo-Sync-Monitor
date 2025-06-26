@@ -233,3 +233,120 @@ function getNested(obj, path)
 {
   return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
+
+/**
+ * Writes an object to a `log.json` or `log.txt` in the same folder folder of the Apps Script project.
+ *
+ * @param {any} obj - The object to log. It will be serialized as JSON or plain text.
+ * @param {boolean} json - If true, logs the object as pretty-printed JSON (`log.jsonc`);
+ *                         otherwise logs as plain text (`log.txt`).
+ * @returns {void}
+ *
+ * @remarks
+ * There's no MimeType.JSON enum
+ * @see https://developers.google.com/apps-script/reference/base/mime-type
+ */
+function logToFile(obj, json = true)
+{
+  const file = DriveApp.getFileById(ScriptApp.getScriptId());
+  const folder = file.getParents().hasNext() ? file.getParents().next() : DriveApp.getRootFolder();
+
+  const content = json ? JSON.stringify(obj, null, 2) : String(obj);
+  const ext = json ? 'jsonc' : 'txt';
+  const mimeType = json ? 'application/json' : MimeType.PLAIN_TEXT;
+
+  const existingFiles = folder.getFilesByName(`log.${ext}`);
+  while (existingFiles.hasNext()) {
+    existingFiles.next().setTrashed(true);
+  }
+
+  folder.createFile(`log.${ext}`, content, mimeType);
+}
+
+/**
+ * Writes an object to a `log.json` or `log.txt` in the same folder folder of the Apps Script project.
+ *
+ * @param {*} obj - The object to log. It will be serialized as JSON or plain text.
+ * @param {boolean} json - If true, logs the object as pretty-printed JSON (`log.jsonc`);
+ *                         otherwise logs as plain text (`log.txt`).
+ * @returns {void}
+ *
+ * @remarks
+ * There's no MimeType.JSON enum
+ * @see https://developers.google.com/apps-script/reference/base/mime-type
+ */
+function logToFile(obj, json = true)
+{
+  const folder = (() => {
+    const scriptFile = DriveApp.getFileById(ScriptApp.getScriptId());
+    const scriptParents = scriptFile.getParents();
+
+    // It's a standalone script
+    if (scriptParents.hasNext()) {
+      return scriptParents.next();
+    }
+
+    // It's a container-bound script
+    const container =
+      SpreadsheetApp.getActiveSpreadsheet?.() ||
+      DocumentApp.getActiveDocument?.() ||
+      SlidesApp.getActivePresentation?.() ||
+      FormApp.getActiveForm?.();
+
+    if (container) {
+      try {
+        const containerFile = DriveApp.getFileById(container.getId());
+        const containerParents = containerFile.getParents();
+        return containerParents.hasNext() ? containerParents.next() : DriveApp.getRootFolder();
+      } catch (e) {
+        // container exists but is not accessible in Drive
+        // e.g. permissions issue, script running with different user context (add-ons, triggers)
+      }
+    }
+
+    // Final fallback
+    return DriveApp.getRootFolder();
+  })();
+
+  const content = json ? JSON.stringify(obj, null, 2) : String(obj);
+  const ext = json ? 'jsonc' : 'txt';
+  const mimeType = json ? 'application/json' : MimeType.PLAIN_TEXT;
+
+  const existingFiles = folder.getFilesByName(`log.${ext}`);
+  while (existingFiles.hasNext()) {
+    existingFiles.next().setTrashed(true);
+  }
+
+  folder.createFile(`log.${ext}`, content, mimeType);
+}
+
+/**
+ * Retrieves the title (first H1 heading) from the README of a GitHub repository.
+ *
+ * @param {string} owner - The GitHub username or organization name that owns the repository.
+ * @param {string} repo - The name of the repository.
+ * @param {string} token - A GitHub personal access token for authenticated API access.
+ * @returns {string} The first H1 heading from the README file, or an error message if the request fails.
+ */
+function getRepoReadmeTitle(owner, repo, token)
+{
+  const url = `https://api.github.com/repos/${owner}/${repo}/readme`;
+  const response = UrlFetchApp.fetch(url, {
+    headers: {
+      Authorization: `token ${token}`,
+      Accept: 'application/vnd.github.v3+json'
+    }
+  });
+
+  if (response.getResponseCode() !== 200) {
+    return 'GitHub API error: ' + response.getContentText();
+  }
+
+  const json = JSON.parse(response.getContentText());
+  const decoded = Utilities.newBlob(Utilities.base64Decode(json.content)).getDataAsString();
+
+  // Extract the first markdown H1 heading
+  const match = decoded.match(/^# (.+)/m);
+
+  return match ? match[1] : '(No title found)';
+}
