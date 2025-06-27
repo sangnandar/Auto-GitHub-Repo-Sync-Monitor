@@ -66,7 +66,7 @@ This setup is especially helpful if you manage many repositories—either as an 
 3. Configure the script to fetch GitHub repo list using the stored token.
 4. `appsscript.json`
 
-    ```json
+    ```js
     {
       "oauthScopes": [
         "https://www.googleapis.com/auth/spreadsheets",
