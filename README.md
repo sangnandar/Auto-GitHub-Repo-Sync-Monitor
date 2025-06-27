@@ -72,7 +72,7 @@ This setup is especially helpful if you manage many repositories—either as an 
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive",
         "https://www.googleapis.com/auth/script.external_request",
-        "https://www.googleapis.com/auth/cloud-platform"
+        "https://www.googleapis.com/auth/cloud-platform" // to read Secret Manager
       ]
     }
     ```
