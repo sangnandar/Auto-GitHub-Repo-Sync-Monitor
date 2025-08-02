@@ -334,8 +334,10 @@ function getRepoReadmeTitle(owner, repo, token)
   const response = UrlFetchApp.fetch(url, {
     headers: {
       Authorization: `token ${token}`,
-      Accept: 'application/vnd.github.v3+json'
-    }
+      Accept: 'application/vnd.github.v3+json',
+      'User-Agent': 'GoogleAppsScript' // GitHub API requires User-Agent
+    },
+    muteHttpExceptions: true
   });
 
   if (response.getResponseCode() !== 200) {
